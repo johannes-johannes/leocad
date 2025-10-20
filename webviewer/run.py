@@ -12,8 +12,6 @@ import sys
 from pathlib import Path
 from zipfile import ZipFile
 
-SUPPORTED_EXTENSIONS = {".dat", ".ldr", ".mpd"}
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_DIR = Path(__file__).resolve().parent / "public"
 LDRAW_DIR = PUBLIC_DIR / "ldraw"
@@ -24,12 +22,13 @@ DEFAULT_PORT = 8000
 
 def ensure_ldraw_library(force: bool = False) -> None:
     """Extract the bundled library into the public folder if needed."""
-    if LDRAW_DIR.exists() and not force and not _library_has_parts():
-        print("Existing LDraw folder is incomplete; rebuilding the library cache.")
-        force = True
-
     if force and LDRAW_DIR.exists():
-        _remove_ldraw_dir()
+        for path in sorted(LDRAW_DIR.rglob("*"), reverse=True):
+            if path.is_file() or path.is_symlink():
+                path.unlink()
+            else:
+                path.rmdir()
+        LDRAW_DIR.rmdir()
 
     if not LDRAW_DIR.exists():
         library_zip = REPO_ROOT / "resources" / "library.zip"
@@ -44,32 +43,6 @@ def ensure_ldraw_library(force: bool = False) -> None:
         target = LDRAW_DIR / "LDConfig.ldr"
         target.write_bytes(colour_table.read_bytes())
 
-    if not _library_has_parts():
-        raise FileNotFoundError(
-            "The extracted library does not contain any part files. "
-            "Try running with --rebuild to refresh the cache."
-        )
-
-
-def _remove_ldraw_dir() -> None:
-    for path in sorted(LDRAW_DIR.rglob("*"), reverse=True):
-        if path.is_file() or path.is_symlink():
-            path.unlink()
-        else:
-            path.rmdir()
-    LDRAW_DIR.rmdir()
-
-
-def _library_has_parts() -> bool:
-    parts_dir = LDRAW_DIR / "parts"
-    if not parts_dir.is_dir():
-        return False
-
-    for path in parts_dir.rglob("*"):
-        if path.is_file() and path.suffix.lower() in SUPPORTED_EXTENSIONS:
-            return True
-    return False
-
 
 
 def build_parts_index(limit: int | None = None) -> None:
@@ -77,19 +50,10 @@ def build_parts_index(limit: int | None = None) -> None:
     if not parts_dir.is_dir():
         raise FileNotFoundError("The parts directory was not found. Did the extraction succeed?")
 
-    entries: list[dict[str, str]] = []
-    for path in sorted(parts_dir.rglob("*")):
-        if not path.is_file():
-            continue
-
-        if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
-            continue
-
-        # Preserve directory structure (e.g. patterned parts under "s/").
-        part_id = str(path.relative_to(parts_dir)).replace(os.sep, "/")
+    entries = []
+    for path in sorted(parts_dir.glob("*.dat")):
         name = extract_part_name(path)
-        entries.append({"id": part_id, "name": name})
-
+        entries.append({"id": path.name, "name": name})
         if limit and len(entries) >= limit:
             break
 

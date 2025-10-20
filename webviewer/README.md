@@ -19,21 +19,19 @@ python webviewer/run.py
 
 The script performs the following steps:
 
-1. Extracts `resources/library.zip` into `webviewer/public/ldraw/`. If the folder
-   already exists but is missing part files, the script automatically rebuilds the
-   cache before proceeding.
+1. Extracts `resources/library.zip` into `webviewer/public/ldraw/` if the folder does
+   not already exist.
 2. Copies the supplied `LDConfig.ldr` colour table into that folder.
 3. Generates `webviewer/public/parts_index.json`, a compact catalogue of the parts
-   present in the bundled library (including patterned variants and nested
-   directories).
+   present in the bundled library.
 4. Starts a simple HTTP server on `http://127.0.0.1:8000` that serves the static
    assets under `webviewer/public/`.
 
 Open the reported URL in a browser. A dropdown lets you choose any part from the
 embedded library, and the model renders via Three.js's `LDrawLoader`.
 
-To force a clean rebuild of the cache and index, run the script with
-`python webviewer/run.py --rebuild`.
+To rebuild the index or refresh the extracted library, delete the
+`webviewer/public/ldraw/` folder and rerun the command.
 
 ## Project layout
 

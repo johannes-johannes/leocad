@@ -58,7 +58,6 @@ async function init() {
 
 function populateDropdown(parts) {
   partSelect.innerHTML = '';
-  partSelect.disabled = parts.length === 0;
   for (const part of parts) {
     const option = document.createElement('option');
     option.value = part.id;
