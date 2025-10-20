@@ -58,6 +58,7 @@ def build_parts_index(limit: int | None = None) -> None:
             break
 
     PARTS_INDEX.write_text(json.dumps(entries, indent=2))
+    print(f"Indexed {len(entries)} part files")
 
 
 def extract_part_name(path: Path) -> str:
