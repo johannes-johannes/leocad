@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LDraw Part Viewer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>LDraw Part Viewer</h1>
+      <label>
+        Part
+        <select id="part-select"></select>
+      </label>
+      <span id="message"></span>
+    </header>
+    <main>
+      <canvas id="viewer"></canvas>
+      <div id="status" hidden>Loading…</div>
+    </main>
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
