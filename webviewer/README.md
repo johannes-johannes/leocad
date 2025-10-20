@@ -23,8 +23,7 @@ The script performs the following steps:
    not already exist.
 2. Copies the supplied `LDConfig.ldr` colour table into that folder.
 3. Generates `webviewer/public/parts_index.json`, a compact catalogue of the parts
-   present in the bundled library (including patterned variants and nested
-   directories).
+   present in the bundled library.
 4. Starts a simple HTTP server on `http://127.0.0.1:8000` that serves the static
    assets under `webviewer/public/`.
 

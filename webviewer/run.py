@@ -12,8 +12,6 @@ import sys
 from pathlib import Path
 from zipfile import ZipFile
 
-SUPPORTED_EXTENSIONS = {".dat", ".ldr", ".mpd"}
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_DIR = Path(__file__).resolve().parent / "public"
 LDRAW_DIR = PUBLIC_DIR / "ldraw"
@@ -52,19 +50,10 @@ def build_parts_index(limit: int | None = None) -> None:
     if not parts_dir.is_dir():
         raise FileNotFoundError("The parts directory was not found. Did the extraction succeed?")
 
-    entries: list[dict[str, str]] = []
-    for path in sorted(parts_dir.rglob("*")):
-        if not path.is_file():
-            continue
-
-        if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
-            continue
-
-        # Preserve directory structure (e.g. patterned parts under "s/").
-        part_id = str(path.relative_to(parts_dir)).replace(os.sep, "/")
+    entries = []
+    for path in sorted(parts_dir.glob("*.dat")):
         name = extract_part_name(path)
-        entries.append({"id": part_id, "name": name})
-
+        entries.append({"id": path.name, "name": name})
         if limit and len(entries) >= limit:
             break
 
