@@ -14,6 +14,7 @@
 *.xcodeproj
 *.qm
 *.ldr
+!/webviewer/assets/LDConfig.ldr
 *.dat
 *.mpd
 !/resources/*.ldr
@@ -38,3 +39,7 @@ uic_wrapper.bat
 appdir
 LeoCAD-Windows*.exe
 *.snap
+
+webviewer/public/ldraw/
+webviewer/public/parts_index.json
+__pycache__/
